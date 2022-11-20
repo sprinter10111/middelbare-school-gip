@@ -1,0 +1,88 @@
+double sens0 = A0;
+double sens1 = A1;
+double sens2 = A2;
+
+float map(float x, float in_min, float in_max, float out_min, float out_max)
+  {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
+
+#define PI 3.1415926535897932384626433832795
+#include <stdio.h>
+#include <stdlib.h>
+#include <Servo.h>
+Servo myservo9, myservo10, myservo11; 
+
+float x;
+float y;
+float z;
+
+int c = 30;
+int l = 20;
+int h = 40;
+double p1 = 0.5;
+double p2 = 0.000349;
+
+double hoek = 0;
+double w2 = 0;
+double w3 = 0;
+
+void setup() {
+  Serial.begin(9600);
+  myservo9.attach(9);  
+  myservo10.attach(10);  
+  myservo11.attach(11);  
+
+  pinMode(9,OUTPUT);
+  pinMode(10,OUTPUT);
+  pinMode(11,OUTPUT);
+}
+
+void loop() {
+  double value1 = 1;
+    
+  x = analogRead(sens0);
+  x = map(x,0,1023,-15,15);
+  /*y = analogRead(sens1);
+  y = map(y,0,1023,-15,15);
+  z = analogRead(sens2);
+  z = map(z, 0,1023,0,20);*/
+  //Serial.println(x);
+  y=0;
+  z=0;
+  
+  while(abs(value1)>p1) {
+    hoek = hoek + p2;
+    value1 = -pow((l*cos(hoek) + h - z),2)+pow(c,2) - (pow(-l*sin(hoek)*cos(-(5/6)*PI)-x,2)+ pow(-l*sin(hoek)*sin(-(5/6)*PI)-y,2));
+    if (hoek>PI)
+    {
+      hoek=0;
+    }
+    //Serial.println(waarde1);   
+  }
+  Serial.println("ja");
+  //W1=w1*(PI/180);
+  //myservo9.write(W1);
+  hoek = hoek - 0.1; 
+ while(abs(waarde2)>p1) {
+    w2 = w2 + p2;
+    value1 = -pow((l*cos(hoek) + h - z),2)+pow(c,2) - (pow(l*sin(hoek)*cos(-(1/6)*PI)-x,2)+pow(l*sin(hoek)*sin(-(1/6)*PI),2));
+    if (w2>PI)
+    {
+      w2=0;
+    }
+  }
+  w2=w2*(PI/180);
+  myservo10.write(w2);
+  
+  while(abs(waarde3)>p1) {
+    w3 = w3 + p2;
+    value1 = -pow((l*cos(hoek) + h - z),2)+pow(c,2) - (pow(l*sin(hoek)*cos((1/2)*PI)-x,2)+pow(l*sin(hoek)*sin((1/2)*PI),2));
+    if (w1>PI)
+    {
+      w1=0;
+    }
+  } 
+   w3=w3*(PI/180);
+   myservo11.write(w3);
+}
